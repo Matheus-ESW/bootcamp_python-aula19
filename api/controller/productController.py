@@ -1,29 +1,26 @@
-from fastapi import APIRouter
-from api.data.db import SessionLocal, engine, Base
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+from api.data.db import engine, Base, get_db
 from api.model.productModel import Product
-from api.view.productSchema import ProductSchema
+from api.view.productSchema import ProductCreate
 
 product_router = APIRouter(prefix="/product_router", tags=["Products"])
 Base.metadata.create_all(bind=engine)
 
-@product_router.post("/items", response_model=ProductSchema)
-def create_product(product_data: ProductSchema):
+@product_router.post("/")
+def home():
+    print("Essa é a home")
 
-    db_product = Product(
-        product_id=product_data.product_id,
-        product_name=product_data.product_name,
-        product_price=product_data.product_price
-    )
+
+@product_router.post("/items/", response_model=Product)
+def create_product(product_data: ProductCreate, db: Session = Depends(get_db)):
+
+    # monta o objeto ORM
+    db_product = Product(**product_data.dict())
+
+    # salva no banco
+    db.add(db_product)
+    db.commit()
+    db.refresh(db_product)
 
     return db_product
-
-def add_product_to_db(product_schema: ProductSchema) -> Product:
-
-    with SessionLocal() as db:
-    
-        db_product = Product(product_id=product_schema.product_id, product_name=product_schema.product_name, product_price=product_schema.product_price)
-        db.add(db_product)
-        db.commit()
-        db.refresh(db_product)
-
-        return db_product
