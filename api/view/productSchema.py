@@ -10,4 +10,4 @@ class ProductCreate(ProductSchema):
     pass
 
 class Product(ProductSchema):
-    prod_id: int
+    product_id: int
