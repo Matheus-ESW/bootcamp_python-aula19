@@ -11,9 +11,9 @@ from typing import List, Union
 product_router = APIRouter(prefix="/prod_route", tags=["Products"])
 productModel.Base.metadata.create_all(bind=db.engine)
 
-@product_router.get("/prods", response_model=Product)
+@product_router.get("/prods", response_model=List[Product])
 def return_all_products(skip: int = 0, limit: int = 10, db: Session = Depends(db.get_db)):
-    prods = db.query(productModel,Product).offset(skip).limit(limit).all()
+    prods = db.query(productModel.Product).offset(skip).limit(limit).all()
 
     return prods
 
