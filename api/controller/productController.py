@@ -17,6 +17,15 @@ def return_all_products(skip: int = 0, limit: int = 10, db: Session = Depends(db
 
     return prods
 
+@product_router.get("/prods/{prod_id}", response_model=Product)
+def return_product(prod_id: int, db: Session = Depends(db.get_db)):
+    db_prod = db.query(productModel.Product).filter(productModel.Product.product_id == prod_id).first()
+
+    if db_prod is None:
+        raise HTTPException(status_code=404, detail="Produto não encontrado!!")
+    
+    return db_prod
+
 @product_router.post("/prods", response_model=Product)
 def create_product(prod: ProductCreate, db: Session = Depends(db.get_db)):
     db_prod = productModel.Product(**prod.dict())
