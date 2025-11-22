@@ -1,26 +1,21 @@
-from fastapi import APIRouter, Depends
+# DOS MEUS MODULOS
+from api.model import productModel
+from api.data import db
+from api.view.productSchema import Product, ProductSchema, ProductCreate
+
+# DEPENDENCIAS EXTERNAS
+from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
-from api.data.db import engine, Base, get_db
-from api.model.productModel import Product
-from api.view.productSchema import ProductCreate
+from typing import List, Union
 
-product_router = APIRouter(prefix="/product_router", tags=["Products"])
-Base.metadata.create_all(bind=engine)
+product_router = APIRouter(prefix="/prod_route", tags=["Products"])
+productModel.Base.metadata.create_all(bind=db.engine)
 
-@product_router.post("/")
-def home():
-    print("Essa é a home")
-
-
-@product_router.post("/items/", response_model=Product)
-def create_product(product_data: ProductCreate, db: Session = Depends(get_db)):
-
-    # monta o objeto ORM
-    db_product = Product(**product_data.dict())
-
-    # salva no banco
-    db.add(db_product)
+@product_router.post("/prods", response_model=Product)
+def create_product(prod: ProductCreate, db: Session = Depends(db.get_db)):
+    db_prod = productModel.Product(**prod.dict())
+    db.add(db_prod)
     db.commit()
-    db.refresh(db_product)
+    db.refresh(db_prod)
 
-    return db_product
+    return db_prod
