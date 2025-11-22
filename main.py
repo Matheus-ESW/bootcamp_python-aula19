@@ -7,6 +7,10 @@ from prodSchema import Prod, ProdBase, ProdCreate
 app = FastAPI()
 prodModel.Base.metadata.create_all(bind=db_test.engine)
 
+@app.get("/")
+def home():
+    return("Criando primeira API com FastAPI!! API criada pelo Matheus.")
+
 @app.post("/prods/", response_model=Prod)
 def create_prod(prod: ProdCreate, db: Session = Depends(db_test.get_db_test)):
     db_prod = prodModel.Prod(**prod.dict())
