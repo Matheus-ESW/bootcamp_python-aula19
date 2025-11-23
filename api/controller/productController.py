@@ -1,7 +1,7 @@
 # DOS MEUS MODULOS
 from api.model import productModel
 from api.data import db
-from api.view.productSchema import Product, ProductSchema, ProductCreate
+from api.view.productSchema import Product, ProductCreate
 
 # DEPENDENCIAS EXTERNAS
 from fastapi import APIRouter, HTTPException, Depends
